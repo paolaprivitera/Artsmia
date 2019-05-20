@@ -1,12 +1,14 @@
 package it.polito.tdp.artsmia.model;
 
+// Classe che mi serve per salvare tutte le informazioni che derivano dal database
+// per memorizzare le relazioni tra gli oggetti
+
 public class Adiacenza {
 	private int o1;
 	private int o2;
 	private int peso;
 
 	public Adiacenza(int o1, int o2, int peso) {
-		super();
 		this.o1 = o1;
 		this.o2 = o2;
 		this.peso = peso;

@@ -25,7 +25,7 @@ public class ArtsmiaDAO {
 			ResultSet res = st.executeQuery();
 			while (res.next()) {
 
-				if(idMap.get(res.getInt("object_id")) == null) {
+				if(idMap.get(res.getInt("object_id")) == null) { // Se non esiste, lo creo e poi lo metto nella mappa
 					ArtObject artObj = new ArtObject(res.getInt("object_id"), res.getString("classification"), res.getString("continent"), 
 							res.getString("country"), res.getInt("curator_approved"), res.getString("dated"), res.getString("department"), 
 							res.getString("medium"), res.getString("nationality"), res.getString("object_name"), res.getInt("restricted"), 
@@ -35,6 +35,7 @@ public class ArtsmiaDAO {
 					result.add(artObj);
 				} else {
 					result.add(idMap.get(res.getInt("object_id")));
+					// Aggiungo l'oggetto gia' esistente che recupero dalla mappa
 				}
 			}
 			conn.close();
@@ -46,12 +47,12 @@ public class ArtsmiaDAO {
 		}
 	}
 	
-	public List<Adiacenza> listAdiacenze(){
-		String sql = "SELECT eo1.object_id AS o1, eo2.object_id AS o2, COUNT(*) AS cnt " + 
-				"FROM exhibition_objects eo1, exhibition_objects eo2 " + 
+	public List<Adiacenza> listAdiacenze(){ // Non mi serve l'idMap perche' non creo nuovi oggetti object
+		String sql = "SELECT eo1.object_id AS o1, eo2.object_id AS o2, COUNT(*) AS cnt " + // COUNT(*) mi da' il peso dell'arco
+				"FROM exhibition_objects eo1, exhibition_objects eo2 " + // Uso la stessa tabella
 				"WHERE eo1.exhibition_id = eo2.exhibition_id " + 
-				"	AND eo2.object_id > eo1.object_id " + 
-				"GROUP BY eo1.object_id,eo2.object_id";
+				"AND eo2.object_id > eo1.object_id " + // elimino il caso in cui l'oggetto venga confrontato con se stesso
+				"GROUP BY eo1.object_id, eo2.object_id"; // xke' ho utilizzato il COUNT(*) e ho selezionato un oggetto
 		Connection conn = DBConnect.getConnection();
 		List<Adiacenza> adj = new LinkedList<Adiacenza>();
 		try {
